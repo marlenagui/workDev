@@ -1,0 +1,31 @@
+<html>  
+ <head>  
+  <title>Drag and Drop File Upload using DropzoneJS Python Flask PostgreSQL</title>  
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" />
+<script type="text/javascript" src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+ </head>  
+ <body> 
+<div class="container"> 
+    <!-- TODO randomly print a photo from the folder traiter -->
+    <h2>glissé déposé vos photos ou cliqué pour selectionner et télécharger vos photos</h2>
+    <div class="dropzone">
+        <div class="dz-message needsclick">
+            <h1>Glissé déposé ou cliqué pour télécharger vos photos.</h1>
+        </div>
+    </div>
+</div>
+<script>
+$(document).ready(function(){
+    $(".dropzone").dropzone({
+      url: '/upload',
+      width: 300,
+      height: 300, 
+      progressBarWidth: '100%',
+      maxFileSize: '25MB'
+    })
+});
+</script> 
+ </body>  
+</html> 
