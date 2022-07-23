@@ -1,17 +1,27 @@
 from flask import Flask, render_template, jsonify, request, flash
 from azure.keyvault.secrets import SecretClient
 from azure.identity import DefaultAzureCredential
+from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient, __version__
 from werkzeug.utils import secure_filename
 import os
 import urllib.request
 from datetime import datetime
 
 #############################################################################################################################################
+# Global variables
+class glob(object):
+    """global variables definition"""
+    verbose = False
+    uploadFolderLocal = ""
+    uploadFolderContainer = "" 
+
+
+#############################################################################################################################################
 # Create the flask app and set parameters      
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024                         # Max length file 16GB 
 app.secret_key='gmljrm,csdlfvnlerjhgoiajrome ldfnvmlkarjmoiazj'
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])       # Allowed extensions
+ALLOWED_EXTENSIONS = set(['heic', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])       # Allowed extensions
    
 def allowed_file(filename):
  return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -41,6 +51,12 @@ credential = DefaultAzureCredential()
 
 secret_client = SecretClient(vault_url=KVUri, credential=credential)  
 
+#############################################################################################################################################
+# Storage account init
+connect_str = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
+# Create the BlobServiceClient object which will be used to create a container client
+blob_service_client = BlobServiceClient.from_connection_string(connect_str)
+
 
 # Rendering the root page
 @app.route('/')
@@ -56,23 +72,35 @@ def main():
 def keyValidation():
     UPLOAD_FOLDER = 'static/images'                                                         # set the root folder for images
     if request.method == 'POST':
-        userKey = str(request.form.get('key'))                                              # we get the key, it corresponds in the form input name=key
-        userFirstname = str(request.form.get('firstname'))                                  # we get the user firstname, it corresponds in the form input name=firstname
+        userKey = str(request.form.get('key')).lower()                                              # we get the key, it corresponds in the form input name=key
+        userFirstname = str(request.form.get('firstname')).lower()                                  # we get the user firstname, it corresponds in the form input name=firstname
         try: 
             retrieved_secret = secret_client.get_secret(userKey)                            # try to retrieve the secret corresponding to the key in the keyvault
         except Exception:
             flash("La clé n'existe pas")
             return render_template("index.html", missing_key="La clé n'existe pas .... essaye encore :) ") 
-
         UPLOAD_FOLDER = UPLOAD_FOLDER + "/" + retrieved_secret.value + "/" + userFirstname  # Update the folder with the secret value of the key in the KV + firstname given on root page
-        print(UPLOAD_FOLDER)
+        glob.uploadFolderContainer=retrieved_secret.value
+        print(glob.uploadFolderContainer.lower())
+        # create the local folder to temporarly store the images
         if not os.path.isdir(UPLOAD_FOLDER):
             try:
                 print("create directory %s", UPLOAD_FOLDER)
                 os.makedirs(UPLOAD_FOLDER)                                                  # os.makedirs is used --> recursively create folders
             except OSError as error:
                 return render_template('error.html', error_message="Impossible de créer le repertoire de dépot des images" + str(error))
-        
+        # create the container in the storage account
+        # Instantiate a new ContainerClient
+        container_client = blob_service_client.get_container_client(glob.uploadFolderContainer.lower())
+        try:
+            # Create new container in the service
+            container_client.create_container()
+        except Exception:
+            flash("La création du blob a echoué")
+
+            # List containers in the storage account
+            list_response = blob_service_client.list_containers()
+            print(list_response)
         app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER                     # Set target folder for the dropzone 
         msg = 'La clé existe'    
     return render_template('uploadPage.html')
@@ -90,6 +118,11 @@ def upload():
           
         if file and allowed_file(file.filename):
            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+           container_client = blob_service_client.get_container_client(glob.uploadFolderContainer)
+           # Create new Container in the service
+           container_client.create_container()
+
         else:
            print('Invalid Uplaod only txt, pdf, png, jpg, jpeg, gif') 
         msg = 'Success Uplaod'    
