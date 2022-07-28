@@ -12,5 +12,5 @@ copy uploadFiles.py /uploadFiles/
 ADD static/ static/
 ADD templates/ templates/
 
-#ENTRYPOINT ["sh"]
-ENTRYPOINT [ "flask", "run", "--host=0.0.0.0" ]
+ENTRYPOINT ["sh"]
+#ENTRYPOINT [ "flask", "run", "--host=0.0.0.0" ]

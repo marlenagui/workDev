@@ -1,0 +1,30 @@
+FROM ubuntu:20.04
+
+USER root
+
+RUN apt-get -y update \
+    && apt-get install -y wget curl libcurl3-gnutls
+
+RUN wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb
+RUN dpkg -i packages-microsoft-prod.deb
+RUN apt-get -y update \
+    && apt-get install -y blobfuse
+
+RUN mkdir -p /mnt/blobfusetmp
+RUN chown root /mnt/blobfusetmp
+
+RUN mkdir /mnt/adls
+
+# application 
+RUN apt-get install -y python3-pip
+RUN mkdir /uploadFiles
+WORKDIR /uploadFiles
+# RUN mkdir static
+# RUN mkdir templates
+
+COPY requirements.txt /uploadFiles/
+RUN pip3 install -r requirements.txt
+copy uploadFiles.py /uploadFiles/
+
+ADD static/ static/
+ADD templates/ templates/

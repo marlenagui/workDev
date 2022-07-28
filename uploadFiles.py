@@ -79,28 +79,19 @@ def keyValidation():
         except Exception:
             flash("La clé n'existe pas")
             return render_template("index.html", missing_key="La clé n'existe pas .... essaye encore :) ") 
-        UPLOAD_FOLDER = UPLOAD_FOLDER + "/" + retrieved_secret.value + "/" + userFirstname  # Update the folder with the secret value of the key in the KV + firstname given on root page
+
+        # Update the folder with the secret value of the key in the KV + firstname given on root page
+        UPLOAD_FOLDER = UPLOAD_FOLDER + "/" + retrieved_secret.value + "/" + userFirstname  
         glob.uploadFolderContainer=retrieved_secret.value
         print(glob.uploadFolderContainer.lower())
         # create the local folder to temporarly store the images
         if not os.path.isdir(UPLOAD_FOLDER):
             try:
                 print("create directory %s", UPLOAD_FOLDER)
-                os.makedirs(UPLOAD_FOLDER)                                                  # os.makedirs is used --> recursively create folders
+                os.makedirs(UPLOAD_FOLDER)       # os.makedirs is used --> recursively create folders
             except OSError as error:
                 return render_template('error.html', error_message="Impossible de créer le repertoire de dépot des images" + str(error))
-        # create the container in the storage account
-        # Instantiate a new ContainerClient
-        container_client = blob_service_client.get_container_client(glob.uploadFolderContainer.lower())
-        try:
-            # Create new container in the service
-            container_client.create_container()
-        except Exception:
-            flash("La création du blob a echoué")
-
-            # List containers in the storage account
-            list_response = blob_service_client.list_containers()
-            print(list_response)
+        
         app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER                     # Set target folder for the dropzone 
         msg = 'La clé existe'    
     return render_template('uploadPage.html')
@@ -118,10 +109,6 @@ def upload():
           
         if file and allowed_file(file.filename):
            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-
-           container_client = blob_service_client.get_container_client(glob.uploadFolderContainer)
-           # Create new Container in the service
-           container_client.create_container()
 
         else:
            print('Invalid Uplaod only txt, pdf, png, jpg, jpeg, gif') 
