@@ -47,8 +47,8 @@ def allowed_file(filename):
 
 keyVaultName = os.environ["KEY_VAULT_NAME"]
 KVUri = f"https://{keyVaultName}.vault.azure.net"
-credential = DefaultAzureCredential()
 
+credential = DefaultAzureCredential()
 secret_client = SecretClient(vault_url=KVUri, credential=credential)  
 
 #############################################################################################################################################
@@ -70,14 +70,14 @@ def main():
 
 @app.route('/uploadFiles', methods=['POST'])
 def keyValidation():
-    UPLOAD_FOLDER = 'static/images'                                                         # set the root folder for images
+    UPLOAD_FOLDER = '/mnt/adls'                                        # set the root folder for images
     if request.method == 'POST':
-        userKey = str(request.form.get('key')).lower()                                              # we get the key, it corresponds in the form input name=key
-        userFirstname = str(request.form.get('firstname')).lower()                                  # we get the user firstname, it corresponds in the form input name=firstname
+        userKey = str(request.form.get('key')).lower()                     
+        userFirstname = str(request.form.get('firstname')).lower()      # we get the user firstname, it corresponds in the form input name=firstname
         try: 
-            retrieved_secret = secret_client.get_secret(userKey)                            # try to retrieve the secret corresponding to the key in the keyvault
+            retrieved_secret = secret_client.get_secret(userKey)        # we get the key, it corresponds in the form input name=key
         except Exception:
-            flash("La clé n'existe pas")
+            flash("La clé n'existe pas...")
             return render_template("index.html", missing_key="La clé n'existe pas .... essaye encore :) ") 
 
         # Update the folder with the secret value of the key in the KV + firstname given on root page
