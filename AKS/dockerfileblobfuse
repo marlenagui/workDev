@@ -13,7 +13,7 @@ RUN apt-get -y update \
 RUN mkdir -p /mnt/blobfusetmp
 RUN chown root /mnt/blobfusetmp
 
-RUN mkdir /mnt/adls
+RUN mkdir /mnt/images
 
 # application 
 RUN apt-get install -y python3-pip

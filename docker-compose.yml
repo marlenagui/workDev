@@ -16,6 +16,6 @@ services:
     env_file:
       - docker.env
     command: >
-       bash -c "blobfuse /mnt/adls --tmp-path=/mnt/blobfusetmp  --container-name=images --basic-remount-check=true --use-adls=false;
+       bash -c "blobfuse /mnt/images --tmp-path=/mnt/blobfusetmp  --container-name=images --basic-remount-check=true --use-adls=false;
        flask run --host=0.0.0.0
        && tail -f /dev/null"

@@ -70,7 +70,7 @@ def main():
 
 @app.route('/uploadFiles', methods=['POST'])
 def keyValidation():
-    UPLOAD_FOLDER = '/mnt/adls'                                        # set the root folder for images
+    UPLOAD_FOLDER = '/mnt/images'                                        # set the root folder for images
     if request.method == 'POST':
         userKey = str(request.form.get('key')).lower()                     
         userFirstname = str(request.form.get('firstname')).lower()      # we get the user firstname, it corresponds in the form input name=firstname
