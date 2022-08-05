@@ -1,0 +1,20 @@
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  creationTimestamp: "2022-08-02T10:20:45Z"
+  labels:
+    addonmanager.kubernetes.io/mode: EnsureExists
+    kubernetes.io/cluster-service: "true"
+  name: azureblob-nfs-standard
+  resourceVersion: "17183"
+  uid: 09d918ef-56ba-4843-9f2f-054bcef94dc1
+allowVolumeExpansion: true
+mountOptions:
+- nconnect=8
+parameters:
+  protocol: nfs
+  skuName: Standard_LRS
+provisioner: blob.csi.azure.com
+reclaimPolicy: Delete
+volumeBindingMode: Immediate

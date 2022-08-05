@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request, flash
+from flask import Flask, render_template, jsonify, request, flash, url_for
 from azure.keyvault.secrets import SecretClient
 from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient, __version__
@@ -21,6 +21,7 @@ class glob(object):
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024                         # Max length file 16GB 
 app.secret_key='gmljrm,csdlfvnlerjhgoiajrome ldfnvmlkarjmoiazj'
+
 ALLOWED_EXTENSIONS = set(['heic', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])       # Allowed extensions
    
 def allowed_file(filename):

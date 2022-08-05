@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: statefulset-blob-nfsv2
+  name: statefulset-blob-nfsv2-standard
   labels:
     app: nginx
 spec:
@@ -29,7 +29,7 @@ spec:
     - metadata:
         name: persistent-storage
         annotations:
-          volume.beta.kubernetes.io/storage-class: azureblob-nfs-premium
+          volume.beta.kubernetes.io/storage-class: azureblob-nfs-standard
       spec:
         accessModes: ["ReadWriteMany"]
         resources:

@@ -2,6 +2,7 @@
     <head>  
         <title>Glissé déposé pour télécharger des photos</title>
         <meta charset="utf-8">
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- bootstrap -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
@@ -39,7 +40,7 @@
                 <h1>{{message}}</h1>
                 {% endfor %}
                 <h2>
-                    <p> Inserer votre cle: <input name="key" id="key" type="text" oninvalid="setCustomValidity('La clé est requise')" oninput="setCustomValidity('')" required></p><br>
+                    <p> Inserer votre clé: <input name="key" id="key" type="text" oninvalid="setCustomValidity('La clé est requise')" oninput="setCustomValidity('')" required></p><br>
                     <p> Donnes moi ton prénom, comme cela je pourrais te remercier: <input name="firstname" id="firstname" type="text" oninvalid="setCustomValidity('Tu as oublié ton prénom')" oninput="setCustomValidity('')" required></p>
                 </h2>
                 <h2><input type="submit" value="Continuer" ></h2>

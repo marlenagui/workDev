@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sa-pvc-blob # pvc name
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteMany # read write access many means can be mounted by many pods at the same time
+  resources:
+    requests:
+      storage: 100Gi
+  volumeName: sa-pv-blob # related to the persistent volume created before
+  storageClassName: sa-blob-fuse # related to the storage class created before

@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: sa-pv-blob
+spec:
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain  # If set as "Delete" container would be removed after pvc deletion
+  storageClassName: sa-blob-fuse # related to the storage class provision before
+  mountOptions:
+    - -o allow_other
+    - --file-cache-timeout-in-seconds=120
+  csi:
+    driver: blob.csi.azure.com
+    readOnly: false
+    # make sure this volumeid is unique in the cluster
+    # `#` is not allowed in self defined volumeHandle
+    volumeHandle: ce67c872-1346-11ed-861d-0242ac120002  # generated online
+    # not sure the below is required, to be tested without, it was already specified in the storage class
+    volumeAttributes:
+      containerName: images
+    nodeStageSecretRef:
+      name: sa-secret
+      namespace: default

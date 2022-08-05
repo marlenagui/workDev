@@ -1,0 +1,56 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: uploadfiles
+  namespace: updloadfiles
+  labels:
+    app: uploadfiles
+spec:
+  containers:
+  - name: uploadfiles
+    image: "sebuploadfiles.azurecr.io/aks/uploadfiles:0.1"
+    resources:
+      limits: 
+        memory: "2Gi"
+        cpu: "750m"
+      # liveness probe to verify stat of the container
+    livenessProbe:
+      httpGet:
+        path: /
+        port: 5000
+      initialDelaySeconds: 5
+      periodSeconds: 30
+    # Readiness probe to know when a container is ready
+    readinessProbe:
+      httpGet:
+        path: /
+        port: 5000
+      initialDelaySeconds: 5
+      periodSeconds: 5
+    ports:
+      - containerPort: 5000
+        name: http
+        protocol: TCP
+    env:
+      - name: AZURE_CLIENT_ID
+        value: "def8c7be-99f3-49ca-99f3-746bad04a203"
+      - name: AZURE_CLIENT_SECRET
+        value: "cDY8Q~GpO6jLhWBDNoAYMz~xFNYOp2RQYPgCDbLS"
+      - name: AZURE_TENANT_ID
+        value: "b1d48f7c-fcc5-4713-8c1e-bcfb9952c5ba"
+      - name: KEY_VAULT_NAME
+        value: updloadfiles
+      - name: FLASK_APP
+        value: uploadFiles.py
+      - name: AZURE_STORAGE_ACCOUNT
+        value: "sebuploadfiles"
+      - name: AZURE_STORAGE_ACCESS_KEY
+        value: "ZROxUZZXU6UM2LdMCRuhb9UMPXoZ0I+P71fvNmLkdA9LJ8dMSfktWszHLbxCSmNRITioPAEb3i2E+AStwRUN4A=="
+    volumeMounts:
+      - name: sa-blob-container-image # refer to the storage class created before see also below volumeClaimTemplates
+        mountPath: /mnt/images # mount point created on the statefulset pod 
+  volumes:
+    - name: sa-blob-container-image
+      persistentVolumeClaim: 
+        clainName: sa-pvc-blob

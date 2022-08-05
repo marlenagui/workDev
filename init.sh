@@ -18,3 +18,5 @@ flask run --host=0.0.0.0
 # git branch -M main
 # git remote add origin https://github.com/marlenagui/uploadFiles.git
 # git push -u origin main
+
+kubectl create secret generic azure-secret --from-literal azurestorageaccountname=sebuploadfiles --from-literal azurestorageaccountkey="ZROxUZZXU6UM2LdMCRuhb9UMPXoZ0I+P71fvNmLkdA9LJ8dMSfktWszHLbxCSmNRITioPAEb3i2E+AStwRUN4A==" --type=Opaque
