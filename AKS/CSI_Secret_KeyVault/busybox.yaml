@@ -1,0 +1,36 @@
+# This is a sample pod definition for using SecretProviderClass and system-assigned identity to access your key vault
+kind: Pod
+apiVersion: v1
+metadata:
+  name: busybox
+  namespace: default
+spec:
+  containers:
+    - name: busybox
+      image: k8s.gcr.io/e2e-test-images/busybox:1.29-1
+      command:
+      - "/bin/sleep"
+      - "10000"
+      volumeMounts:
+      - name: secrets-store-inline
+        mountPath: "/mnt/secrets-store"
+        readOnly: true
+      env:
+        # - name: HOST_DB
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: sqlsecrets
+        #       key: HOST-DB
+        #       optional: true
+        - name: STORAGE_ACCOUNT
+          valueFrom:
+            secretKeyRef:
+              key: azurestorageaccountname
+              name: sa-secret
+  volumes:
+    - name: secrets-store-inline
+      csi:
+        driver: secrets-store.csi.k8s.io
+        readOnly: true
+        volumeAttributes:
+          secretProviderClass: "containeraksdemo-dbappsettings"
